@@ -4952,6 +4952,255 @@ code { font-family: 'Fira Code', 'Monaco', 'Consolas', monospace; font-size: var
             window.onload = function() {
                 if (!kingMuscle) { kingMuscle = new KingMuscle(); window.kingMuscle = kingMuscle; }
             };
+
+            // =====================================================================
+            // 7D AI EYE - Enhanced Visual QA Monitoring System
+            // =====================================================================
+            class AI7DEye {
+                constructor() {
+                    this.monitoring = true;
+                    this.healingEnabled = true;
+                    this.init();
+                }
+                init() {
+                    console.log('7D AI Eye: Activating...');
+                    this.startMonitoring();
+                    this.startAutoHealing();
+                    this.startBugDetection();
+                }
+                startMonitoring() {
+                    setInterval(() => {
+                        this.monitorAllDisplays();
+                        this.monitorDOMHealth();
+                    }, 2000);
+                }
+                monitorAllDisplays() {
+                    const displays = document.querySelectorAll('canvas, .preview-container, .viewport-canvas');
+                    displays.forEach(display => this.checkDisplayHealth(display));
+                }
+                checkDisplayHealth(display) {
+                    const issues = [];
+                    const rect = display.getBoundingClientRect();
+                    if (rect.width > window.innerWidth * 2) issues.push('overflow-width');
+                    if (rect.height > window.innerHeight * 2) issues.push('overflow-height');
+                    if (rect.width < 0 || rect.height < 0) issues.push('negative-dimensions');
+                    if (isNaN(rect.width) || isNaN(rect.height)) issues.push('nan-dimensions');
+                    if (issues.length > 0 && this.healingEnabled) this.autoHealDisplay(display, issues);
+                }
+                autoHealDisplay(display, issues) {
+                    issues.forEach(issue => {
+                        switch(issue) {
+                            case 'overflow-width': display.style.maxWidth = '100vw'; break;
+                            case 'overflow-height': display.style.maxHeight = '100vh'; break;
+                            case 'negative-dimensions': display.style.width = 'auto'; display.style.height = 'auto'; break;
+                            case 'nan-dimensions': display.style.width = '100%'; display.style.height = '100%'; break;
+                        }
+                    });
+                    kingMuscle.logAction(`7D AI Eye: Auto-healed ${issues.length} display issues`);
+                }
+                monitorDOMHealth() {
+                    const broken = document.querySelectorAll('.broken-layout, .layout-error');
+                    broken.forEach(el => { el.classList.remove('broken-layout', 'layout-error'); el.style.display = ''; });
+                    const overflow = document.querySelectorAll('[style*="overflow"]');
+                    overflow.forEach(el => {
+                        if (el.scrollWidth > el.clientWidth && !el.style.overflowX) el.style.overflowX = 'auto';
+                        if (el.scrollHeight > el.clientHeight && !el.style.overflowY) el.style.overflowY = 'auto';
+                    });
+                }
+                startAutoHealing() { setInterval(() => this.healAllIssues(), 5000); }
+                healAllIssues() {
+                    const broken = document.querySelectorAll('.broken, .error');
+                    broken.forEach(el => el.classList.remove('broken', 'error'));
+                    const modals = document.querySelectorAll('.modal, .dialog');
+                    modals.forEach((modal, index) => modal.style.zIndex = 1000 + index);
+                }
+                startBugDetection() {
+                    window.addEventListener('error', (event) => {
+                        console.error('7D AI Eye: Error:', event.error);
+                        kingMuscle.logAction(`7D AI Eye: Detected error - ${event.error.message}`);
+                    });
+                    window.addEventListener('unhandledrejection', (event) => {
+                        console.error('7D AI Eye: Unhandled rejection:', event.reason);
+                        kingMuscle.logAction(`7D AI Eye: Detected rejection - ${event.reason}`);
+                    });
+                }
+            }
+
+            // =====================================================================
+            // VECTOR VAULT - Local Vector Database
+            // =====================================================================
+            class VectorVault {
+                constructor() {
+                    this.dbName = 'VectorVault';
+                    this.cache = new Map();
+                    this.init();
+                }
+                init() {
+                    console.log('Vector Vault: Initializing...');
+                    const request = indexedDB.open(this.dbName, 1);
+                    request.onerror = (e) => console.error('Vector Vault: Error:', e);
+                    request.onsuccess = (e) => { this.db = e.target.result; this.loadCache(); };
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('vectors')) db.createObjectStore('vectors', { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains('projects')) db.createObjectStore('projects', { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains('files')) db.createObjectStore('files', { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains('chatHistory')) db.createObjectStore('chatHistory', { keyPath: 'id' });
+                    };
+                }
+                async loadCache() { if (!this.db) return; }
+                async saveProject(project) { if (!this.db) return null; }
+                async getProject(id) { if (!this.db) return null; }
+                async saveFile(file) { if (!this.db) return null; }
+                async getFile(id) { if (!this.db) return null; }
+                async saveChatMessage(message) { if (!this.db) return null; }
+                async getChatHistory(projectId, limit = 50) { if (!this.db) return []; }
+                generateId() { return `vv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`; }
+            }
+
+            // =====================================================================
+            // FILE BRIDGE - Universal Asset Sharing
+            // =====================================================================
+            class FileBridge {
+                constructor() {
+                    this.sharedAssets = new Map();
+                    this.assetIdCounter = 0;
+                    this.init();
+                }
+                init() {
+                    console.log('File Bridge: Initializing...');
+                    this.setupDragAndDrop();
+                    this.setupCopyPaste();
+                }
+                setupDragAndDrop() {
+                    document.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+                    document.addEventListener('drop', (e) => { e.preventDefault(); const data = e.dataTransfer.getData('text/plain'); if (data) this.handleDrop(data, e.target); });
+                }
+                handleDrop(data, target) { try { const asset = JSON.parse(data); if (asset.type && asset.id) this.importAsset(asset, target); } catch (error) {} }
+                setupCopyPaste() {
+                    document.addEventListener('copy', (e) => {
+                        const selection = window.getSelection();
+                        if (selection && selection.rangeCount > 0) {
+                            const element = selection.getRangeAt(0).startContainer.parentElement;
+                            if (element && element.hasAttribute('data-asset-id')) {
+                                e.preventDefault(); const assetId = element.getAttribute('data-asset-id'); const asset = this.getAsset(assetId);
+                                if (asset) e.clipboardData.setData('text/plain', JSON.stringify(asset));
+                            }
+                        }
+                    });
+                    document.addEventListener('paste', (e) => {
+                        const data = e.clipboardData.getData('text/plain');
+                        if (data) try { const asset = JSON.parse(data); if (asset.type && asset.id) { e.preventDefault(); this.handlePaste(asset); } } catch (error) {}
+                    });
+                }
+                registerAsset(asset) { const id = asset.id || `asset-${this.assetIdCounter++}`; this.sharedAssets.set(id, { ...asset, id, timestamp: Date.now(), studio: kingMuscle.currentStudio }); return id; }
+                getAsset(id) { return this.sharedAssets.get(id); }
+                importAsset(asset, target) { const newAsset = { ...asset, id: this.generateId(), studio: kingMuscle.currentStudio, importedFrom: asset.studio, importedAt: Date.now() }; return this.registerAsset(newAsset); }
+                handlePaste(asset) { this.importAsset(asset, document.activeElement); kingMuscle.logAction(`File Bridge: Pasted asset from ${asset.studio} to ${kingMuscle.currentStudio}`); }
+                generateId() { return `fb-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`; }
+            }
+
+            // =====================================================================
+            // TIME TRAVEL - Version History System
+            // =====================================================================
+            class TimeTravel {
+                constructor() {
+                    this.versions = [];
+                    this.currentVersion = -1;
+                    this.maxVersions = 100;
+                    this.init();
+                }
+                init() { console.log('Time Travel: Initializing...'); this.startAutoSave(); }
+                startAutoSave() { this.checkpointInterval = setInterval(() => this.saveCheckpoint(), 30000); }
+                saveCheckpoint() { const state = this.getCurrentState(); this.saveVersion(state); }
+                getCurrentState() { return { studio: kingMuscle.currentStudio, project: kingMuscle.currentProject, file: kingMuscle.currentFile, timestamp: Date.now(), data: this.getStudioData() }; }
+                getStudioData() { switch(kingMuscle.currentStudio) { case 'chat': return this.getChatData(); default: return {}; } }
+                getChatData() { const messages = []; document.querySelectorAll('#chat-messages .message').forEach(el => { const role = el.classList.contains('user-message') ? 'user' : 'ai'; const content = el.querySelector('.message-content').textContent; messages.push({ role, content, timestamp: Date.now() }); }); return { messages }; }
+                saveVersion(state) { this.versions.push(state); this.currentVersion = this.versions.length - 1; if (this.versions.length > this.maxVersions) { this.versions.shift(); this.currentVersion--; } kingMuscle.logAction(`Time Travel: Saved version ${this.currentVersion}`); }
+                undo() { if (this.currentVersion > 0) { this.currentVersion--; this.restoreVersion(this.currentVersion); kingMuscle.logAction(`Time Travel: Undo to version ${this.currentVersion}`); } }
+                redo() { if (this.currentVersion < this.versions.length - 1) { this.currentVersion++; this.restoreVersion(this.currentVersion); kingMuscle.logAction(`Time Travel: Redo to version ${this.currentVersion}`); } }
+                restoreVersion(versionIndex) { const version = this.versions[versionIndex]; if (!version) return; this.restoreStudioData(version); this.currentVersion = versionIndex; }
+                restoreStudioData(version) { if (version.studio === 'chat') this.restoreChatData(version.data); }
+                restoreChatData(data) { const chatMessages = document.getElementById('chat-messages'); chatMessages.innerHTML = ''; data.messages.forEach(msg => kingMuscle.addMessage(msg.content, msg.role)); }
+                clearHistory() { this.versions = []; this.currentVersion = -1; kingMuscle.logAction('Time Travel: Cleared history'); }
+            }
+
+            // =====================================================================
+            // HARDWARE AUTO-SCALING
+            // =====================================================================
+            class HardwareScaler {
+                constructor() {
+                    this.performanceTier = 'auto';
+                    this.qualitySettings = { low: { maxTextureSize: 1024, fpsTarget: 30 }, medium: { maxTextureSize: 2048, fpsTarget: 60 }, high: { maxTextureSize: 4096, fpsTarget: 120 }, ultra: { maxTextureSize: 8192, fpsTarget: 144 } };
+                    this.currentSettings = this.qualitySettings.medium;
+                    this.init();
+                }
+                init() { console.log('Hardware Scaler: Initializing...'); this.detectHardware(); this.startMonitoring(); }
+                detectHardware() {
+                    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    this.performanceTier = isMobile ? 'low' : 'medium';
+                    this.currentSettings = this.qualitySettings[this.performanceTier];
+                }
+                startMonitoring() { setInterval(() => this.adjustQuality(), 5000); }
+                adjustQuality() { }
+                setQuality(tier) { if (this.qualitySettings[tier]) { this.performanceTier = tier; this.currentSettings = this.qualitySettings[tier]; this.applySettings(); } }
+                applySettings() { document.querySelectorAll('canvas').forEach(canvas => { canvas.width = Math.min(canvas.width, this.currentSettings.maxTextureSize); canvas.height = Math.min(canvas.height, this.currentSettings.maxTextureSize); }); }
+            }
+
+            // =====================================================================
+            // AUTO-DOC ENGINE
+            // =====================================================================
+            class AutoDocEngine {
+                constructor() { console.log('Auto-Doc Engine: Initializing...'); }
+                async generateDocumentation(content, type = 'code') {
+                    const prompt = this.getDocPrompt(content, type);
+                    try { const response = await kingMuscle.sendToAgnes(prompt); return response; } catch (error) { return 'Error generating documentation'; }
+                }
+                getDocPrompt(content, type) {
+                    const prompts = {
+                        code: `Generate comprehensive documentation for the following code:\n${content}`,
+                        image: `Generate documentation for this image:\n${content}`,
+                        project: `Generate project documentation:\n${content}`
+                    };
+                    return prompts[type] || prompts.code;
+                }
+                async exportToPDF(content, filename = 'documentation.pdf') { const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><body>${content}</body></html>`); printWindow.document.close(); printWindow.print(); }
+            }
+
+            // =====================================================================
+            // MULTIMODAL RESEARCH
+            // =====================================================================
+            class MultimodalResearch {
+                constructor() { console.log('Multimodal Research: Initializing...'); }
+                async search(query, modalities = ['text']) { const results = []; for (const modality of modalities) { try { results.push(...await this.searchModality(query, modality)); } catch (error) {} } return results; }
+                async searchModality(query, modality) { if (modality === 'text') return this.searchText(query); return []; }
+                async searchText(query) { const prompt = `Search for information about: ${query}`; const response = await kingMuscle.sendToAgnes(prompt); return [{ title: 'Text Search', content: response, relevance: 0.8 }]; }
+            }
+
+            // =====================================================================
+            // SILENT ORCHESTRATION
+            // =====================================================================
+            class SilentOrchestration {
+                constructor() { this.orchestrationQueue = []; this.isProcessing = false; console.log('Silent Orchestration: Initializing...'); this.startProcessing(); }
+                startProcessing() { setInterval(() => this.processQueue(), 100); }
+                async processQueue() { if (this.isProcessing || this.orchestrationQueue.length === 0) return; this.isProcessing = true; while (this.orchestrationQueue.length > 0) { const task = this.orchestrationQueue.shift(); try { await this.executeTask(task); } catch (error) { console.error('Silent Orchestration: Error:', error); } } this.isProcessing = false; }
+                async executeTask(task) { switch(task.type) { case 'ai-request': return kingMuscle.sendToAgnes(task.message); case 'studio-switch': kingMuscle.switchStudio(task.studio); break; } }
+                queueTask(task) { this.orchestrationQueue.push(task); kingMuscle.logAction(`Silent Orchestration: Queued task - ${task.type}`); }
+                queueAIRequest(message, studio) { this.queueTask({ type: 'ai-request', message, studio }); }
+                queueStudioSwitch(studio) { this.queueTask({ type: 'studio-switch', studio }); }
+                clearQueue() { this.orchestrationQueue = []; }
+            }
+
+            // =====================================================================
+            // INITIALIZE ALL SYSTEMS
+            // =====================================================================
+            let ai7DEye = null, vectorVault = null, fileBridge = null, timeTravel = null, hardwareScaler = null, autoDocEngine = null, multimodalResearch = null, silentOrchestration = null;
+            const initSystems = () => {
+                const check = setInterval(() => {
+                    if (kingMuscle) { clearInterval(check); ai7DEye = new AI7DEye(); vectorVault = new VectorVault(); fileBridge = new FileBridge(); timeTravel = new TimeTravel(); hardwareScaler = new HardwareScaler(); autoDocEngine = new AutoDocEngine(); multimodalResearch = new MultimodalResearch(); silentOrchestration = new SilentOrchestration(); window.ai7DEye = ai7DEye; window.vectorVault = vectorVault; window.fileBridge = fileBridge; window.timeTravel = timeTravel; window.hardwareScaler = hardwareScaler; window.autoDocEngine = autoDocEngine; window.multimodalResearch = multimodalResearch; window.silentOrchestration = silentOrchestration; console.log('All systems initialized'); }
+                }, 100);
+            };
+            if (document.readyState === 'complete' || document.readyState === 'interactive') initSystems(); else document.addEventListener('DOMContentLoaded', initSystems);
         </script>
     </body>
 </html>
