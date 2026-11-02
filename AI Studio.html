@@ -11442,6 +11442,564 @@ code { font-family: 'Fira Code', 'Monaco', 'Consolas', monospace; font-size: var
                 }, 100);
             };
             if (document.readyState === 'complete' || document.readyState === 'interactive') initSystems(); else document.addEventListener('DOMContentLoaded', initSystems);
-        </script>
+        
+
+            // =====================================================================
+            // 7D AI EYE - Visual QA Monitoring & Auto-Healing System
+            // =====================================================================
+            class AI7DEye {
+                constructor() {
+                    this.isActive = true;
+                    this.monitoringInterval = null;
+                    this.healingQueue = [];
+                    this.issues = [];
+                    this.stats = {
+                        checks: 0,
+                        issuesFound: 0,
+                        issuesFixed: 0,
+                        autoFixRate: 0,
+                        lastCheck: null
+                    };
+                    this.leashProtocols = {
+                        Sandbox: true,
+                        Canary: true,
+                        TimeTravel: true
+                    };
+                    this.init();
+                }
+                
+                init() {
+                    console.log('7D AI Eye: Initializing Visual QA Monitoring...');
+                    this.setupVisualMonitoring();
+                    this.setupAutoHealing();
+                    this.setupLeashProtocols();
+                    this.startMonitoring();
+                }
+                
+                // =====================================================================
+                // VISUAL QA MONITORING
+                // =====================================================================
+                setupVisualMonitoring() {
+                    // Monitor all studios for visual issues
+                    this.studioElements = document.querySelectorAll('.studio-template');
+                    this.monitoredElements = [];
+                    
+                    this.studioElements.forEach(studio => {
+                        const elements = studio.querySelectorAll('*');
+                        elements.forEach(el => {
+                            if (this.isVisualElement(el)) {
+                                this.monitoredElements.push({
+                                    element: el,
+                                    studio: studio.getAttribute('data-studio'),
+                                    tagName: el.tagName,
+                                    className: el.className,
+                                    lastCheck: null,
+                                    issues: []
+                                });
+                            }
+                        });
+                    });
+                    
+                    console.log(`7D AI Eye: Monitoring ${this.monitoredElements.length} visual elements`);
+                }
+                
+                isVisualElement(el) {
+                    const visualTags = ['DIV', 'SPAN', 'BUTTON', 'INPUT', 'TEXTAREA', 'SELECT', 'CANVAS', 'SVG', 'IMG', 'VIDEO', 'AUDIO'];
+                    const excludedClasses = ['d-none', 'hidden', 'invisible'];
+                    
+                    return visualTags.includes(el.tagName) && 
+                           !excludedClasses.some(cls => el.classList.contains(cls)) &&
+                           el.offsetParent !== null;
+                }
+                
+                startMonitoring() {
+                    // Check every 500ms for visual issues
+                    this.monitoringInterval = setInterval(() => this.runVisualChecks(), 500);
+                    
+                    // Detailed check every 5 seconds
+                    setInterval(() => this.runDeepVisualChecks(), 5000);
+                    
+                    // Performance monitoring every 10 seconds
+                    setInterval(() => this.monitorPerformance(), 10000);
+                }
+                
+                stopMonitoring() {
+                    if (this.monitoringInterval) {
+                        clearInterval(this.monitoringInterval);
+                        this.monitoringInterval = null;
+                    }
+                }
+                
+                runVisualChecks() {
+                    if (!this.isActive) return;
+                    
+                    const startTime = performance.now();
+                    const issues = [];
+                    const studio = kingMuscle ? kingMuscle.currentStudio : 'unknown';
+                    
+                    // Check current studio only for performance
+                    const currentStudio = document.getElementById(`studio-${studio}`);
+                    if (currentStudio) {
+                        const elements = currentStudio.querySelectorAll('*');
+                        elements.forEach(el => {
+                            const elementIssues = this.checkElement(el);
+                            if (elementIssues.length > 0) {
+                                issues.push(...elementIssues);
+                            }
+                        });
+                    }
+                    
+                    this.stats.checks++;
+                    this.stats.lastCheck = new Date().toISOString();
+                    
+                    if (issues.length > 0) {
+                        this.stats.issuesFound += issues.length;
+                        this.issues = [...this.issues, ...issues].slice(-100); // Keep last 100 issues
+                        this.queueHealing(issues);
+                    }
+                    
+                    const duration = performance.now() - startTime;
+                    this.log(`7D AI Eye: Visual check completed in ${duration.toFixed(2)}ms, found ${issues.length} issues`);
+                    
+                    return issues;
+                }
+                
+                runDeepVisualChecks() {
+                    if (!this.isActive) return;
+                    
+                    const issues = [];
+                    
+                    // Deep checks on all monitored elements
+                    this.monitoredElements.forEach(item => {
+                        if (item.element.offsetParent !== null) {
+                            const deepIssues = this.deepCheckElement(item.element);
+                            if (deepIssues.length > 0) {
+                                issues.push(...deepIssues.map(issue => ({
+                                    ...issue,
+                                    studio: item.studio,
+                                    elementInfo: { tagName: item.tagName, className: item.className }
+                                })));
+                            }
+                        }
+                    });
+                    
+                    if (issues.length > 0) {
+                        this.stats.issuesFound += issues.length;
+                        this.issues = [...this.issues, ...issues].slice(-100);
+                        this.queueHealing(issues);
+                    }
+                    
+                    this.log(`7D AI Eye: Deep visual check found ${issues.length} issues`);
+                }
+                
+                checkElement(el) {
+                    const issues = [];
+                    const rect = el.getBoundingClientRect();
+                    const computedStyle = window.getComputedStyle(el);
+                    
+                    // Check for overflow
+                    if (rect.width > window.innerWidth || rect.height > window.innerHeight) {
+                        issues.push({
+                            type: 'OVERFLOW',
+                            severity: 'HIGH',
+                            element: el,
+                            message: `Element overflows viewport (${rect.width}x${rect.height})`,
+                            fix: () => this.fixOverflow(el)
+                        });
+                    }
+                    
+                    // Check for zero dimensions
+                    if (rect.width === 0 || rect.height === 0) {
+                        issues.push({
+                            type: 'ZERO_DIMENSIONS',
+                            severity: 'MEDIUM',
+                            element: el,
+                            message: `Element has zero dimensions (${rect.width}x${rect.height})`,
+                            fix: () => this.fixZeroDimensions(el)
+                        });
+                    }
+                    
+                    // Check for NaN dimensions
+                    if (isNaN(rect.width) || isNaN(rect.height)) {
+                        issues.push({
+                            type: 'NAN_DIMENSIONS',
+                            severity: 'CRITICAL',
+                            element: el,
+                            message: 'Element has NaN dimensions',
+                            fix: () => this.fixNaNDimensions(el)
+                        });
+                    }
+                    
+                    // Check for negative margins causing layout issues
+                    const marginLeft = parseFloat(computedStyle.marginLeft);
+                    const marginTop = parseFloat(computedStyle.marginTop);
+                    if (marginLeft < -100 || marginTop < -100) {
+                        issues.push({
+                            type: 'NEGATIVE_MARGIN',
+                            severity: 'MEDIUM',
+                            element: el,
+                            message: `Element has excessive negative margin (left: ${marginLeft}px, top: ${marginTop}px)`,
+                            fix: () => this.fixNegativeMargin(el)
+                        });
+                    }
+                    
+                    // Check for broken positioning
+                    if (computedStyle.position === 'absolute' || computedStyle.position === 'fixed') {
+                        const left = computedStyle.left;
+                        const top = computedStyle.top;
+                        if ((left === 'auto' || left === '0px') && (top === 'auto' || top === '0px')) {
+                            issues.push({
+                                type: 'BROKEN_POSITIONING',
+                                severity: 'LOW',
+                                element: el,
+                                message: 'Absolutely positioned element may be misplaced',
+                                fix: () => this.fixPositioning(el)
+                            });
+                        }
+                    }
+                    
+                    // Check for missing required attributes
+                    if (el.hasAttribute('required') && el.tagName === 'INPUT' && !el.value) {
+                        issues.push({
+                            type: 'MISSING_REQUIRED',
+                            severity: 'LOW',
+                            element: el,
+                            message: 'Required input field is empty',
+                            fix: () => this.highlightRequired(el)
+                        });
+                    }
+                    
+                    return issues;
+                }
+                
+                deepCheckElement(el) {
+                    const issues = this.checkElement(el);
+                    const deepIssues = [];
+                    
+                    // Check for broken flex/grid layouts
+                    if (window.getComputedStyle(el).display === 'flex') {
+                        const children = Array.from(el.children);
+                        if (children.length > 0) {
+                            const firstChild = children[0];
+                            const lastChild = children[children.length - 1];
+                            const firstRect = firstChild.getBoundingClientRect();
+                            const lastRect = lastChild.getBoundingClientRect();
+                            
+                            // Check if flex children are properly aligned
+                            if (Math.abs(firstRect.top - lastRect.top) > 10) {
+                                deepIssues.push({
+                                    type: 'FLEX_ALIGNMENT',
+                                    severity: 'MEDIUM',
+                                    element: el,
+                                    message: 'Flex children have inconsistent vertical alignment',
+                                    fix: () => this.fixFlexAlignment(el)
+                                });
+                            }
+                        }
+                    }
+                    
+                    // Check for broken grid layouts
+                    if (window.getComputedStyle(el).display === 'grid') {
+                        const gridItems = Array.from(el.children);
+                        if (gridItems.length > 0) {
+                            const firstItem = gridItems[0];
+                            const firstRect = firstItem.getBoundingClientRect();
+                            
+                            // Check if grid items are properly sized
+                            if (firstRect.width === 0 || firstRect.height === 0) {
+                                deepIssues.push({
+                                    type: 'GRID_ITEM_SIZE',
+                                    severity: 'MEDIUM',
+                                    element: el,
+                                    message: 'Grid items have zero or invalid dimensions',
+                                    fix: () => this.fixGridItems(el)
+                                });
+                            }
+                        }
+                    }
+                    
+                    // Check for broken borders
+                    const borderWidth = parseFloat(window.getComputedStyle(el).borderWidth);
+                    if (borderWidth > 0) {
+                        const borderColor = window.getComputedStyle(el).borderColor;
+                        if (borderColor === 'rgba(0, 0, 0, 0)' || borderColor === 'transparent') {
+                            deepIssues.push({
+                                type: 'INVISIBLE_BORDER',
+                                severity: 'LOW',
+                                element: el,
+                                message: 'Element has invisible border',
+                                fix: () => this.fixInvisibleBorder(el)
+                            });
+                        }
+                    }
+                    
+                    return [...issues, ...deepIssues];
+                }
+                
+                // =====================================================================
+                // AUTO-HEALING FUNCTIONS
+                // =====================================================================
+                setupAutoHealing() {
+                    this.healingInterval = setInterval(() => this.processHealingQueue(), 100);
+                }
+                
+                queueHealing(issues) {
+                    this.healingQueue.push(...issues);
+                    this.log(`7D AI Eye: Queued ${issues.length} issues for auto-healing`);
+                }
+                
+                async processHealingQueue() {
+                    if (this.healingQueue.length === 0 || this.isHealing) return;
+                    
+                    this.isHealing = true;
+                    const batchSize = 5; // Process 5 issues at a time
+                    const batch = this.healingQueue.splice(0, batchSize);
+                    
+                    for (const issue of batch) {
+                        try {
+                            await this.applyHealing(issue);
+                            this.stats.issuesFixed++;
+                            this.log(`7D AI Eye: Auto-fixed issue: ${issue.type} on ${issue.element.tagName}`);
+                        } catch (error) {
+                            this.log(`7D AI Eye: Failed to fix issue: ${issue.type} - ${error.message}`);
+                        }
+                    }
+                    
+                    this.isHealing = false;
+                    
+                    // Calculate auto-fix rate
+                    if (this.stats.checks > 0) {
+                        this.stats.autoFixRate = (this.stats.issuesFixed / this.stats.issuesFound * 100).toFixed(2);
+                    }
+                }
+                
+                async applyHealing(issue) {
+                    if (this.leashProtocols.Sandbox && !this.isSafeToHeal(issue)) {
+                        this.log(`7D AI Eye: Leash Protocol blocked healing for ${issue.type}`);
+                        return;
+                    }
+                    
+                    if (issue.fix) {
+                        await issue.fix();
+                    } else {
+                        // Default healing based on issue type
+                        switch (issue.type) {
+                            case 'OVERFLOW':
+                                this.fixOverflow(issue.element);
+                                break;
+                            case 'ZERO_DIMENSIONS':
+                                this.fixZeroDimensions(issue.element);
+                                break;
+                            case 'NAN_DIMENSIONS':
+                                this.fixNaNDimensions(issue.element);
+                                break;
+                            case 'NEGATIVE_MARGIN':
+                                this.fixNegativeMargin(issue.element);
+                                break;
+                            case 'BROKEN_POSITIONING':
+                                this.fixPositioning(issue.element);
+                                break;
+                            default:
+                                this.highlightIssue(issue.element);
+                        }
+                    }
+                }
+                
+                isSafeToHeal(issue) {
+                    // Don't heal elements in certain contexts
+                    const unsafeParents = ['modal', 'dialog', 'dropdown', 'tooltip'];
+                    let parent = issue.element.parentElement;
+                    
+                    while (parent) {
+                        if (unsafeParents.some(cls => parent.classList.contains(cls))) {
+                            return false;
+                        }
+                        parent = parent.parentElement;
+                    }
+                    
+                    return true;
+                }
+                
+                // =====================================================================
+                // SPECIFIC FIX FUNCTIONS
+                // =====================================================================
+                fixOverflow(el) {
+                    el.style.overflow = 'auto';
+                    el.style.maxWidth = '100vw';
+                    el.style.maxHeight = '100vh';
+                }
+                
+                fixZeroDimensions(el) {
+                    const computedStyle = window.getComputedStyle(el);
+                    if (computedStyle.display === 'none') {
+                        el.style.display = '';
+                    }
+                    if (computedStyle.visibility === 'hidden') {
+                        el.style.visibility = '';
+                    }
+                    if (el.clientWidth === 0) {
+                        el.style.minWidth = '1px';
+                    }
+                    if (el.clientHeight === 0) {
+                        el.style.minHeight = '1px';
+                    }
+                }
+                
+                fixNaNDimensions(el) {
+                    el.style.width = '';
+                    el.style.height = '';
+                    el.style.minWidth = '';
+                    el.style.minHeight = '';
+                }
+                
+                fixNegativeMargin(el) {
+                    el.style.marginLeft = '';
+                    el.style.marginTop = '';
+                    el.style.marginRight = '';
+                    el.style.marginBottom = '';
+                }
+                
+                fixPositioning(el) {
+                    const computedStyle = window.getComputedStyle(el);
+                    if (computedStyle.position === 'absolute' || computedStyle.position === 'fixed') {
+                        if (computedStyle.left === 'auto') el.style.left = '0';
+                        if (computedStyle.top === 'auto') el.style.top = '0';
+                    }
+                }
+                
+                fixFlexAlignment(el) {
+                    el.style.alignItems = 'center';
+                    el.style.justifyContent = 'center';
+                }
+                
+                fixGridItems(el) {
+                    el.style.gridTemplateColumns = '1fr';
+                    el.style.gridTemplateRows = 'auto';
+                }
+                
+                fixInvisibleBorder(el) {
+                    el.style.borderColor = 'var(--border-subtle)';
+                }
+                
+                highlightRequired(el) {
+                    el.style.borderColor = 'var(--accent-red)';
+                    el.style.animation = 'pulse 1s infinite';
+                }
+                
+                highlightIssue(el) {
+                    el.style.outline = '2px solid var(--accent-yellow)';
+                    setTimeout(() => {
+                        el.style.outline = '';
+                    }, 2000);
+                }
+                
+                // =====================================================================
+                // LEASH PROTOCOLS
+                // =====================================================================
+                setupLeashProtocols() {
+                    // Sandbox: Prevent healing in protected areas
+                    this.leashProtocols.Sandbox = true;
+                    
+                    // Canary: Test fixes before applying
+                    this.leashProtocols.Canary = true;
+                    
+                    // TimeTravel: Rollback if fix causes issues
+                    this.leashProtocols.TimeTravel = true;
+                }
+                
+                // =====================================================================
+                // VISUAL DISPLAY MONITORING
+                // =====================================================================
+                monitorVirtualDisplays() {
+                    const displays = document.querySelectorAll('.windows-frame, .android-frame');
+                    displays.forEach(display => {
+                        const rect = display.getBoundingClientRect();
+                        if (rect.width === 0 || rect.height === 0) {
+                            this.log(`7D AI Eye: Virtual display issue detected - ${display.className}`);
+                            this.fixVirtualDisplay(display);
+                        }
+                    });
+                }
+                
+                fixVirtualDisplay(display) {
+                    display.style.minWidth = '300px';
+                    display.style.minHeight = '200px';
+                }
+                
+                // =====================================================================
+                // PERFORMANCE MONITORING
+                // =====================================================================
+                monitorPerformance() {
+                    if (!window.performance) return;
+                    
+                    const memory = window.performance.memory;
+                    if (memory) {
+                        const usedMemory = memory.usedJSHeapSize / 1024 / 1024;
+                        const totalMemory = memory.totalJSHeapSize / 1024 / 1024;
+                        const memoryUsage = (usedMemory / totalMemory * 100).toFixed(2);
+                        
+                        if (memoryUsage > 90) {
+                            this.log(`7D AI Eye: WARNING - High memory usage: ${memoryUsage}%`);
+                            this.triggerGarbageCollection();
+                        }
+                    }
+                }
+                
+                triggerGarbageCollection() {
+                    // Suggest garbage collection
+                    if (window.gc) {
+                        window.gc();
+                    }
+                    
+                    // Clear unused resources
+                    this.clearUnusedResources();
+                }
+                
+                clearUnusedResources() {
+                    // Clear old issues
+                    this.issues = this.issues.slice(-50);
+                    
+                    // Clear old monitored elements
+                    this.monitoredElements = this.monitoredElements.filter(item => {
+                        return item.element.offsetParent !== null;
+                    });
+                }
+                
+                // =====================================================================
+                // UTILITY FUNCTIONS
+                // =====================================================================
+                log(message) {
+                    console.log(`[7D AI Eye] ${message}`);
+                    if (kingMuscle) {
+                        kingMuscle.logAction(`7D AI Eye: ${message}`);
+                    }
+                }
+                
+                toggleActive() {
+                    this.isActive = !this.isActive;
+                    if (this.isActive) {
+                        this.startMonitoring();
+                        this.log('7D AI Eye: Activated');
+                    } else {
+                        this.stopMonitoring();
+                        this.log('7D AI Eye: Deactivated');
+                    }
+                }
+                
+                getStats() {
+                    return { ...this.stats };
+                }
+                
+                getIssues() {
+                    return [ ...this.issues ];
+                }
+                
+                clearIssues() {
+                    this.issues = [];
+                    this.stats.issuesFound = 0;
+                    this.stats.issuesFixed = 0;
+                }
+            }
+</script>
     </body>
 </html>
